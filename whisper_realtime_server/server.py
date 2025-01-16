@@ -1,6 +1,5 @@
 import base64
 import logging
-import os
 from contextlib import asynccontextmanager
 
 import numpy as np
@@ -18,21 +17,14 @@ transcriber: WhisperModel = None
 async def lifespan(app: FastAPI):
     global transcriber
 
-    faster_whisper_custom_model_path = '/mnt/home/WhisperLive/assets/fw-large-v3/'
-
-    if not os.path.exists(faster_whisper_custom_model_path):
-        raise ValueError(f"Custom faster_whisper model '{faster_whisper_custom_model_path}' is not a valid path.")
-    logging.info("Custom model option was provided. Switching to single model mode.")
-
     model_size = "distil-large-v3"
 
     model = WhisperModel(model_size, device="cuda", compute_type="float16")
     transcriber = BatchedInferencePipeline(model=model)
     yield
 
+
 app = FastAPI(lifespan=lifespan)
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -63,5 +55,5 @@ async def transcribe_ws(websocket: WebSocket):
         pass
 
     except Exception as e:
-        logger.error('Error in LLM task', exc_info=True)
+        logger.error('Exception occured', exc_info=True)
         logger.error(str(e))

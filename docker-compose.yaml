@@ -1,0 +1,18 @@
+services:
+  whisper-realtime:
+    build:
+      dockerfile: dev.Dockerfile
+      context: .
+    container_name: whisper-realtime-server
+    volumes:
+      - ./whisper_realtime_server:/app
+      - /mnt/home/.cache/huggingface/hub:/root/.cache/huggingface/hub
+    ports:
+      - "9090:9000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [gpu]
