@@ -1,14 +1,13 @@
 import base64
 import logging
 import os
-import uuid
 from contextlib import asynccontextmanager
 
+import numpy as np
 import starlette
 from fastapi import FastAPI
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from starlette.websockets import WebSocket
-import numpy as np
 
 from transcriber import continuous_transcriber
 
@@ -25,8 +24,7 @@ async def lifespan(app: FastAPI):
         raise ValueError(f"Custom faster_whisper model '{faster_whisper_custom_model_path}' is not a valid path.")
     logging.info("Custom model option was provided. Switching to single model mode.")
 
-    model_size = "large-v3"
-    model_path = '/mnt/home/WhisperLive/assets/fw-large-v3'
+    model_size = "distil-large-v3"
 
     model = WhisperModel(model_size, device="cuda", compute_type="float16")
     transcriber = BatchedInferencePipeline(model=model)
