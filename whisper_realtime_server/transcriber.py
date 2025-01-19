@@ -73,7 +73,8 @@ async def continuous_transcriber(
         if transcribed_samples.shape[0] < (SAMPLING_RATE / 2):
             continue
 
-        t_segments, info = model.transcribe(transcribed_samples, beam_size=5, word_timestamps=True)
+        logger.info(f'Processing audio with length {transcribed_samples.shape[0] / SAMPLING_RATE}s')
+        t_segments, info = model.transcribe(transcribed_samples, beam_size=5, word_timestamps=True, vad_filter=True)
 
         segment: Segment
 

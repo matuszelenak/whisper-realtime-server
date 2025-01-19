@@ -14,7 +14,7 @@ transcriber: WhisperModel = None
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     global transcriber
 
     model_size = "distil-large-v3"
@@ -49,7 +49,8 @@ async def transcribe_ws(websocket: WebSocket):
     try:
         while True:
             async for segment in continuous_transcriber(transcriber, samples_generator()):
-                await websocket.send_json(segment)
+                if len(segment['words']) > 0:
+                    await websocket.send_json(segment)
 
     except starlette.websockets.WebSocketDisconnect:
         pass
